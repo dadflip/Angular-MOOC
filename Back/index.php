@@ -1,5 +1,7 @@
 <?php
+echo "If this page displays without error, It's a great new ! Let's celebrate";
 require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/db.php';
 
 use Slim\Factory\AppFactory;
 use Dotenv\Dotenv;
@@ -17,22 +19,21 @@ $app->add(function ($request, $handler) {
         ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
 });
 
-//hello route
+// Route hello
 $app->get('/hello/{name}', function ($request, $response, $args) {
     $name = $args['name'];
     $response->getBody()->write("Hello, $name");
     return $response;
 });
 
-//users route
+// Route users
 $app->get('/users', function ($request, $response, $args) {
     $conn = getConnection();
     $sql = "SELECT * FROM users";
     $stmt = $conn->query($sql);
-    $users = $stmt->fetchAllAssociative();
+    $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $response->getBody()->write(json_encode($users));
     return $response->withHeader('Content-Type', 'application/json');
 });
-
 
 $app->run();
